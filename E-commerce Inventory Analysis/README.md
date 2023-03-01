@@ -1,4 +1,4 @@
-# Using SQL to Improve Inventory Tracking and Prevent Losses for an Online Retailer
+# E-commerce Inventory Analysis
 
 The eCommerce store of a major online retailer is facing a critical challenge of inaccurate inventory tracking resulting in dissatisfied customers and lost sales, potentially leading to the survival of the company being at risk. As a data analyst, your responsibility is to utilize SQL to monitor and assess the inventory levels of the eCommerce store, in order to address the issue and prevent any further damage.
 In this analysis, I will be answering 5 major questions using 3 different approaches for each of the question :
