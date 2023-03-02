@@ -23,5 +23,3 @@ This table contains information about the inventory levels of the products sold 
 product_id: unique identifier for each product
 inventory_date: date of the inventory count
 inventory_level: number of units in inventory on the inventory date
-
-
