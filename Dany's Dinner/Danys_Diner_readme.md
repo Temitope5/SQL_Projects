@@ -4,7 +4,7 @@
 
 ## Solution
 
-View the complete syntax.
+View the complete syntax [here](https://github.com/Temitope5/SQL_Projects/blob/main/Dany's%20Dinner/Dany's%20Dinner.sql)
 
 ***
 

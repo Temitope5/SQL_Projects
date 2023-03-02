@@ -8,11 +8,12 @@ View the complete syntax [here](https://github.com/Temitope5/SQL_Projects/blob/m
 
 ***
 
-### Question 1. What are the top 5 products with the highest inventory levels on the most recent inventory date?
+## Question 1. What are the top 5 products with the highest inventory levels on the most recent inventory date?
 
 #### Approach 1
 
-````SELECT p.product_name,
+````sql 
+SELECT p.product_name,
 (SELECT inventory_level FROM inventory WHERE product_id = p.product_id ORDER BY inventory_date DESC LIMIT 1) AS inventory_level
 FROM products AS p
 ORDER BY inventory_level DESC; 
@@ -25,7 +26,8 @@ ORDER BY inventory_level DESC;
 
 #### Approach 2:
 
-````SELECT p.product_name,i.inventory_level
+````sql
+SELECT p.product_name,i.inventory_level
 FROM products AS p
 INNER JOIN inventory AS i
 ON i.product_id = p.product_id
@@ -37,7 +39,8 @@ WHERE i.inventory_date = (SELECT MAX(inventory_date) FROM inventor
 - It uses a subquery to find the latest inventory_date for each product, and then joins the inventory table again to retrieve the corresponding inventory_level for each product. The results are sorted in descending order by inventory_level.
 
 #### Approach 3:
-```` SELECT p.product_name, i.inventory_level
+```` sql
+SELECT p.product_name, i.inventory_level
 FROM products AS p
 INNER JOIN 
 (
@@ -78,11 +81,12 @@ Order by i.inventory_level DESC
 
 - This suggests you would need to stock up on Product A and Product B as quick as possible before customers starts complaining
 
-### Question 2. What is the total inventory level for each product category on the most recent inventory date?
+## Question 2. What is the total inventory level for each product category on the most recent inventory date?
 
 #### Approach 1
 
-````SELECT p.product_category, SUM(i.inventory_level)AS total_inventory_level
+````sql
+SELECT p.product_category, SUM(i.inventory_level)AS total_inventory_level
 FROM products AS p
 INNER JOIN inventory AS i
 ON i.product_id = p.product_id
@@ -96,11 +100,12 @@ GROUP BY product_category
 
 #### Approach 2
 
-````SELECT p.product_category,
+````sql
+SELECT p.product_category,
 SUM((SELECT inventory_level FROM inventory WHERE product_id = p.product_id ORDER BY inventory_date DESC LIMIT 1)) AS total_inventory_level
 FROM products AS p
-GROUP BY pr
-````oduct_category
+GROUP BY product_category
+````
 ORDER BY 2 DESC
 
 #### Explanation:
@@ -110,7 +115,8 @@ ORDER BY 2 DESC
 
 #### Approach 3
 
-````SELECT p.product_category, sum(i.inventory_level) AS total_inventory_level
+````sql 
+SELECT p.product_category, sum(i.inventory_level) AS total_inventory_level
 FROM products AS p
 INNER JOIN 
 (
@@ -147,11 +153,12 @@ ORDER BY 2 DESC
 - Product category 3 has a total stock level of 80
 
 
-### Question 3 : What is the average inventory level for each product category for the month of January 2022?
+## Question 3 : What is the average inventory level for each product category for the month of January 2022?
 
 #### Approach 1
 
-````SELECT p.product_category,round(avg(i.inventory_level),2) AS avg_inventory_level
+````sql
+SELECT p.product_category,round(avg(i.inventory_level),2) AS avg_inventory_level
 FROM products AS p
 INNER JOIN inventory AS i
 ON p.product_id = i.product_id
@@ -165,7 +172,8 @@ GROUP BY p.product_category
 
 #### Approach 2
 
-````SELECT p.product_category,round(avg(i.inventory_level),2) AS avg_inventory_level
+````sql 
+SELECT p.product_category,round(avg(i.inventory_level),2) AS avg_inventory_level
 FROM products AS p
 INNER JOIN inventory AS i
 ON p.product_id = i.product_id
@@ -177,7 +185,7 @@ GROUP BY p.product_category
 
 
 #### Approach 3
-````
+````sql
 SELECT p.product_category, ROUND(AVG(i.inventory_level), 2) AS avg_inventory_level
 FROM products AS p, inventory AS i
 WHERE p.product_id = i.product_id
@@ -197,11 +205,12 @@ GROUP BY p.product_category
 |Category |2|	200|
 |Category |3|	71.67|
 
-### Question 4. Which products had a decrease in inventory level from the previous inventory date to the current inventory date?
+## Question 4. Which products had a decrease in inventory level from the previous inventory date to the current inventory date?
 
 #### Approach 1
 
-````WITH cte AS 
+````sql
+WITH cte AS 
 (
 SELECT
 product_name,
@@ -221,7 +230,8 @@ WHERE inventory_change IS NOT NULL
 
 #### Approach 2
 
-````SELECT  p.product_name, inv_1.inventory_date, inv_1.inventory_level - inv_2.inventory_level AS inventory_diff
+````sql
+SELECT  p.product_name, inv_1.inventory_date, inv_1.inventory_level - inv_2.inventory_level AS inventory_diff
 FROM inventory AS inv_1
 JOIN inventory inv_2 ON inv_1.product_id = inv_2.product_id 
          AND inv_1.inventory_date = inv_2.inventory_date + INTERVAL '1 day'
@@ -234,7 +244,8 @@ WHERE inv_1.inventory_level < inv_2.inventory_level;
 
 #### Approach 3
 
-````SELECT 
+````sql
+SELECT 
     
 	p.product_name,
     curr.inventory_date, 
@@ -260,7 +271,7 @@ ORDER BY curr.product_id, curr.inventory_date DESC;
 
 #### Result
 |	product_name	|	inventory_date	|	inventory_diff	|
-|-------------|-------------|
+|-------------|-------------|-------------|
 |	Product A	|	03/01/2022	|	-30	|
 |	Product A	|	02/01/2022	|	-20	|
 |	Product B	|	03/01/2022	|	-30	|
@@ -272,11 +283,12 @@ ORDER BY curr.product_id, curr.inventory_date DESC;
 |	Product E	|	02/01/2022	|	-30	|
 
 
-### Question 5. What is the overall trend in inventory levels for each product category over the month of January 2022?
+## Question 5. What is the overall trend in inventory levels for each product category over the month of January 2022?
 
 #### Approach 1
 
-````SELECT p.product_category,i.inventory_date , round(avg(i.inventory_level),2) AS avg_inventory_level
+````sql
+SELECT p.product_category,i.inventory_date , round(avg(i.inventory_level),2) AS avg_inventory_level
 FROM products AS p
 INNER JOIN inventory AS i
 ON p.product_id = i.product_id
@@ -290,7 +302,8 @@ ORDER BY p.product_category, i.inventory_date
 
 #### Approach 2
 
-````SELECT p.product_category, i.inventory_date,round(avg(i.inventory_level),2) AS avg_inventory_level
+````sql
+SELECT p.product_category, i.inventory_date,round(avg(i.inventory_level),2) AS avg_inventory_level
 FROM products AS p
 INNER JOIN inventory AS i
 ON p.product_id = i.product_id
@@ -305,8 +318,11 @@ ORDER BY p.product_category, i.inventory_date
 - The WHERE clause filters the results to include only inventory levels recorded between January 1, 2022, and January 31, 2022. The GROUP BY clause groups the data by product category and inventory date, allowing the query to calculate the average inventory level for each product category on each inventory date in January 2022.
 
 - Finally, the ORDER BY clause sorts the results by product category and inventory date, which makes it easier to analyze the data.
+
 #### Approach 3
-````SELECT p.product_category,i.inventory_date, ROUND(AVG(i.inventory_level), 2) AS avg_inventory_level
+
+````sql
+SELECT p.product_category,i.inventory_date, ROUND(AVG(i.inventory_level), 2) AS avg_inventory_level
 FROM products AS p, inventory AS i
 WHERE p.product_id = i.product_id
 AND i.inventory_date BETWEEN '2022-01-01' AND '2022-01-31'
@@ -324,6 +340,7 @@ Finally, the ORDER BY clause sorts the results by product category and inventory
 #### Result 
 
 |	product_category	|	inventory_date	|	avg_inventory_level	|
+|-------------|-------------|-------------|
 |	Category 1	|	01/01/2022	|	125	|
 |	Category 1	|	02/01/2022	|	90	|
 |	Category 1	|	03/01/2022	|	62.5	|
