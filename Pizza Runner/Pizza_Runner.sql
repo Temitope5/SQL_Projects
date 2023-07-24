@@ -7,6 +7,7 @@
 View the complete syntax [here](https://github.com/Temitope5/SQL_Projects/blob/main/Dany's%20Dinner/Dany's%20Dinner.sql)
 
 ***
+/*
 A. Pizza Metrics
 
 1. How many pizzas were ordered?
@@ -19,7 +20,8 @@ A. Pizza Metrics
 8. How many pizzas were delivered that had both exclusions and extras?
 9. What was the total volume of pizzas ordered for each hour of the day?
 10. What was the volume of orders for each day of the week?
-
+*/
+	
 Solution
 
 1. SELECT count(pizza_id) AS total_ordered_pizzas
