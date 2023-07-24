@@ -1,10 +1,6 @@
-# SQL_Projects
 
-# 🍜 Case Study #1: Pizza Runner
+-- 🍜 Case Study #1: Pizza Runner
 
-## Solution
-
-View the complete syntax [here](https://github.com/Temitope5/SQL_Projects/blob/main/Dany's%20Dinner/Dany's%20Dinner.sql)
 
 ***
 /*
@@ -24,12 +20,17 @@ A. Pizza Metrics
 	
 Solution
 
-1. SELECT count(pizza_id) AS total_ordered_pizzas
+-- 1. 
+	
+SELECT count(pizza_id) AS total_ordered_pizzas
 FROM pizza_runner.customer_orders;
-2.SELECT count( distinct order_id) AS total_unique_orders
+-- 2.
+	
+SELECT count( distinct order_id) AS total_unique_orders
 FROM pizza_runner.customer_orders;
 
-3.  WITH cleaned_runner_orders AS 
+-- 3.  
+WITH cleaned_runner_orders AS 
 (
 SELECT order_id, runner_id, pickup_time, distance, duration,
 CASE WHEN cancellation = 'NaN' then NULL
@@ -43,7 +44,8 @@ SELECT count(*) AS sucessful_orders
 from cleaned_runner_orders
 WHERE cancellation IS NULL
 
-4.  WITH cleaned_runner_orders AS 
+-- 4.   
+WITH cleaned_runner_orders AS 
 (
 SELECT order_id, runner_id, pickup_time, distance, duration,
 CASE WHEN cancellation = 'NaN' then NULL
