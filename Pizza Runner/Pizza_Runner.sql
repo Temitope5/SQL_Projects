@@ -89,7 +89,7 @@ FROM customer_order_temp;
   
 SELECT count(*) AS sucessful_orders
 from runner_order_temp
-WHERE cancellation IS NULL
+WHERE cancellation IS NULL;
 
 
 -- 4. 
@@ -100,7 +100,7 @@ from(
 	LEFT JOIN runner_order_temp AS o USING (order_id)
 	)AS order_subquery
 WHERE cancellation IS NULL
-GROUP BY pizza_id
+GROUP BY pizza_id;
 
 -- 5. 
 SELECT distinct customer_id,
@@ -108,7 +108,7 @@ COALESCE(SUM(CASE WHEN pizza_id = 1 THEN 1 END),0) AS "Meat Lovers",
 COALESCE(SUM(CASE WHEN pizza_id = 2 THEN 1 END),0) AS "Vegetarian" 
 FROM customer_order_temp
 GROUP BY customer_id
-ORDER BY 1
+ORDER BY 1;
 
 -- 6.
 
@@ -118,7 +118,7 @@ RIGHT JOIN runner_order_temp AS r USING (order_id)
 WHERE cancellation IS NULL
 GROUP BY order_id
 ORDER BY 1 desc
-LIMIT 1
+LIMIT 1;
 
 -- 7. 
 SELECT c.customer_id,
@@ -127,13 +127,37 @@ SUM(CASE WHEN exclusions IS NOT NULL OR extras IS NOT NULL THEN 1 ELSE 0 END)AS 
 FROM customer_order_temp AS c
 LEFT JOIN runner_order_temp AS r USING(order_id)
 WHERE r.cancellation IS NULL  
-GROUP BY c.customer_id
+GROUP BY c.customer_id;
 
 -- 8.
 SELECT
 SUM(CASE WHEN exclusions IS NOT NULL AND extras IS NOT NULL THEN 1 ELSE 0 END)AS Pizzas_with_Exclusions_and_Extras
 FROM customer_order_temp AS c
 LEFT JOIN runner_order_temp AS r USING(order_id)
-WHERE r.cancellation IS NULL 
+WHERE r.cancellation IS NULL; 
 
 -- 9.
+SELECT DATE_PART('hour', order_time) AS hour_of_day, count(pizza_id)AS pizzas_ordered
+FROM customer_order_temp
+GROUP by  hour_of_day
+ORDER BY pizzas_ordered DESC;
+
+-- 10.
+SELECT TO_CHAR(order_time,'Day') AS day_of_week,
+EXTRACT(dow FROM order_time)AS day_of_week2,
+COUNT(pizza_id)AS pizzas_ordered
+FROM customer_order_temp
+GROUP by  day_of_week,day_of_week2
+ORDER BY pizzas_ordered DESC; 
+
+/* B. Runner and Customer Experience */
+
+/* 1. How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)
+2. What was the average time in minutes it took for each runner to arrive at the Pizza Runner HQ to pickup the order?
+3. Is there any relationship between the number of pizzas and how long the order takes to prepare?
+4. What was the average distance travelled for each customer?
+5. What was the difference between the longest and shortest delivery times for all orders?
+6. What was the average speed for each runner for each delivery and do you notice any trend for these values?
+7. What is the successful delivery percentage for each runner? */
+
+
