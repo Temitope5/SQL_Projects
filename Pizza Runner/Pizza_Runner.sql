@@ -1,21 +1,12 @@
-<<<<<<< HEAD
-/* # SQL_Projects
 
-# 🍜 Case Study #2: Pizza Runner
-Stack: PostregreSQL
-## Solution
-
-=======
-
--- 🍜 Case Study #1: Pizza Runner
-
->>>>>>> ca747ef1926f97f9cc9ceffdc7f6294448a2cb71
-
-***
 /*
+
+🍜 Case Study: Pizza Runner
+ Stack: PostregreSQL
+
+
 A. Pizza Metrics
- */
-/* 
+
 1. How many pizzas were ordered?
 2. How many unique customer orders were made?
 3. How many successful orders were delivered by each runner?
@@ -26,11 +17,11 @@ A. Pizza Metrics
 8. How many pizzas were delivered that had both exclusions and extras?
 9. What was the total volume of pizzas ordered for each hour of the day?
 10. What was the volume of orders for each day of the week?
-<<<<<<< HEAD
+
  */
 --Solution
 
---Data Cleaning and Transformation
+-- Data Cleaning and Transformation
 --A. Runner_orders Table: To clean the runner_orders table,I created a temporary table otherwise known as a temp_table to acheive this
 
 CREATE TEMP TABLE runner_order_temp AS
@@ -93,22 +84,6 @@ FROM pizza_runner.customer_orders;
 SELECT count( distinct order_id) AS total_unique_orders
 FROM customer_order_temp;
 
--- 3.
-  
-=======
-*/
-	
-Solution
-
--- 1. 
-	
-SELECT count(pizza_id) AS total_ordered_pizzas
-FROM pizza_runner.customer_orders;
--- 2.
-	
-SELECT count( distinct order_id) AS total_unique_orders
-FROM pizza_runner.customer_orders;
-
 -- 3.  
 WITH cleaned_runner_orders AS 
 (
@@ -124,21 +99,6 @@ FROM pizza_runner.runner_orders
 SELECT count(*) AS sucessful_orders
 from runner_order_temp
 WHERE cancellation IS NULL;
-
-<<<<<<< HEAD
-=======
--- 4.   
-WITH cleaned_runner_orders AS 
-(
-SELECT order_id, runner_id, pickup_time, distance, duration,
-CASE WHEN cancellation = 'NaN' then NULL
-	 WHEN cancellation = ''  then NULL
-	 WHEN cancellation = 'null' then NULL
-	 ELSE cancellation
-	 END as cancellation
-FROM pizza_runner.runner_orders
-)
->>>>>>> ca747ef1926f97f9cc9ceffdc7f6294448a2cb71
 
 -- 4. 
 SELECT pizza_id, COUNT (*) AS no_of_pizzas
@@ -209,8 +169,3 @@ ORDER BY pizzas_ordered DESC;
 7. What is the successful delivery percentage for each runner? */
 
 
-<<<<<<< HEAD
-=======
-5. 
-	
->>>>>>> ca747ef1926f97f9cc9ceffdc7f6294448a2cb71
