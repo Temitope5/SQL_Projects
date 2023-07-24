@@ -1,11 +1,18 @@
+<<<<<<< HEAD
 /* # SQL_Projects
 
 # 🍜 Case Study #2: Pizza Runner
 Stack: PostregreSQL
 ## Solution
 
+=======
+
+-- 🍜 Case Study #1: Pizza Runner
+
+>>>>>>> ca747ef1926f97f9cc9ceffdc7f6294448a2cb71
 
 ***
+/*
 A. Pizza Metrics
  */
 /* 
@@ -19,6 +26,7 @@ A. Pizza Metrics
 8. How many pizzas were delivered that had both exclusions and extras?
 9. What was the total volume of pizzas ordered for each hour of the day?
 10. What was the volume of orders for each day of the week?
+<<<<<<< HEAD
  */
 --Solution
 
@@ -87,10 +95,50 @@ FROM customer_order_temp;
 
 -- 3.
   
+=======
+*/
+	
+Solution
+
+-- 1. 
+	
+SELECT count(pizza_id) AS total_ordered_pizzas
+FROM pizza_runner.customer_orders;
+-- 2.
+	
+SELECT count( distinct order_id) AS total_unique_orders
+FROM pizza_runner.customer_orders;
+
+-- 3.  
+WITH cleaned_runner_orders AS 
+(
+SELECT order_id, runner_id, pickup_time, distance, duration,
+CASE WHEN cancellation = 'NaN' then NULL
+	 WHEN cancellation = ''  then NULL
+	 WHEN cancellation = 'null' then NULL
+	 ELSE cancellation
+	 END as cancellation
+FROM pizza_runner.runner_orders
+)
+>>>>>>> ca747ef1926f97f9cc9ceffdc7f6294448a2cb71
 SELECT count(*) AS sucessful_orders
 from runner_order_temp
 WHERE cancellation IS NULL;
 
+<<<<<<< HEAD
+=======
+-- 4.   
+WITH cleaned_runner_orders AS 
+(
+SELECT order_id, runner_id, pickup_time, distance, duration,
+CASE WHEN cancellation = 'NaN' then NULL
+	 WHEN cancellation = ''  then NULL
+	 WHEN cancellation = 'null' then NULL
+	 ELSE cancellation
+	 END as cancellation
+FROM pizza_runner.runner_orders
+)
+>>>>>>> ca747ef1926f97f9cc9ceffdc7f6294448a2cb71
 
 -- 4. 
 SELECT pizza_id, COUNT (*) AS no_of_pizzas
@@ -161,3 +209,8 @@ ORDER BY pizzas_ordered DESC;
 7. What is the successful delivery percentage for each runner? */
 
 
+<<<<<<< HEAD
+=======
+5. 
+	
+>>>>>>> ca747ef1926f97f9cc9ceffdc7f6294448a2cb71
