@@ -75,12 +75,10 @@ SELECT
 FROM pizza_runner.customer_orders;
 
 -- 1. 
-
   SELECT count(pizza_id) AS total_ordered_pizzas
   FROM customer_order_temp;
 
 -- 2.
-
 SELECT count( distinct order_id) AS total_unique_orders
 FROM customer_order_temp;
 
@@ -95,7 +93,7 @@ CASE WHEN cancellation = 'NaN' then NULL
 	 END as cancellation
 FROM pizza_runner.runner_orders
 )
->>>>>>> ca747ef1926f97f9cc9ceffdc7f6294448a2cb71
+
 SELECT count(*) AS sucessful_orders
 from runner_order_temp
 WHERE cancellation IS NULL;
@@ -119,7 +117,6 @@ GROUP BY customer_id
 ORDER BY 1;
 
 -- 6.
-
 SELECT count(pizza_id)AS order_count
 FROM customer_order_temp
 RIGHT JOIN runner_order_temp AS r USING (order_id)
@@ -168,4 +165,73 @@ ORDER BY pizzas_ordered DESC;
 6. What was the average speed for each runner for each delivery and do you notice any trend for these values?
 7. What is the successful delivery percentage for each runner? */
 
+-- 1.
+SELECT 
+CONCAT('Week ',to_char(registration_date,'WW'))AS registration_week,
+COUNT(runner_id) AS runners_registered
+FROM pizza_runner.runners 
+GROUP BY 1
+ORDER BY 1;
+
+
+-- 2. 
+--Method 1- Using Subquery
+SELECT ROUND(AVG(time_taken_seconds/60.0),1) AS avg_pickup_minutes
+FROM
+(
+	SELECT order_id,runner_id,pickup_time,order_time,
+	EXTRACT(epoch FROM (pickup_time::timestamp - order_time::timestamp)) AS time_taken_seconds
+	FROM runner_order_temp
+	LEFT JOIN customer_order_temp
+	USING (order_id)
+	WHERE cancellation IS NULL
+)AS runner_time
+
+
+--Method 2 Using CTE
+WITH time_taken_cte AS
+(
+  SELECT 
+    c.order_id, 
+    c.order_time, 
+    r.pickup_time, 
+ EXTRACT(EPOCH FROM (r.pickup_time::timestamp - c.order_time::timestamp)) / 60 AS pickup_minutes
+  FROM customer_order_temp AS c
+  JOIN runner_order_temp AS r
+    ON c.order_id = r.order_id
+  WHERE cancellation IS NULL
+)
+
+SELECT 
+ROUND(AVG(pickup_minutes)) AS avg_pickup_minutes
+FROM time_taken_cte
+WHERE pickup_minutes > 1;
+
+-- 3. 
+WITH pizza_details AS
+(
+
+	SELECT order_id, pizza_ordered, runner_id,pickup_time,order_time,
+	EXTRACT(epoch FROM (pickup_time::timestamp - order_time::timestamp)) AS time_taken_seconds
+	FROM runner_order_temp
+		LEFT JOIN
+	(
+		SELECT order_id, COUNT(*) AS pizza_ordered,
+		MIN(order_time) AS order_time
+		FROM customer_order_temp
+		GROUP BY 1
+     ) AS co USING (order_id)
+)
+
+SELECT pizza_ordered, ROUND(AVG(time_taken_seconds/60.0),1) AS avg_seconds
+FROM pizza_details
+GROUP BY 1
+ORDER BY 1
+
+
+-- 4.
+
+-- 5.
+
+-- 6.
 
