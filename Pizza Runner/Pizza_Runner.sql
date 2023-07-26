@@ -208,6 +208,7 @@ FROM time_taken_cte
 WHERE pickup_minutes > 1;
 
 -- 3. 
+-- -- There exists a positive relationship b/w no of pizzas ordered and the time taken to prepare
 WITH pizza_details AS
 (
 
@@ -219,8 +220,6 @@ WITH pizza_details AS
 		SELECT order_id, COUNT(*) AS pizza_ordered,
 		MIN(order_time) AS order_time
 		FROM customer_order_temp
-		GROUP BY 1
-     ) AS co USING (order_id)
 )
 
 SELECT pizza_ordered, ROUND(AVG(time_taken_seconds/60.0),1) AS avg_seconds
@@ -230,8 +229,35 @@ ORDER BY 1
 
 
 -- 4.
+-- Let's assume that distance is calculated from Pizza Runner HQ to customer’s place
+SELECT 
+  c.customer_id, 
+  ROUND(AVG(r.distance)) AS avg_distance
+FROM customer_order_temp AS c
+JOIN runner_order_temp AS r
+  ON c.order_id = r.order_id
+WHERE r.duration != 0
+GROUP BY c.customer_id;
+
 
 -- 5.
-
+SELECT MAX(duration::FLOAT) - MIN(duration::FLOAT) AS delivery_time_difference
+FROM runner_order_temp
+WHERE duration IS NOT NULL;
 -- 6.
+
+-- Average speed = Distance in km / Duration in hour
+SELECT 
+  r.runner_id, 
+  c.customer_id, 
+  c.order_id, 
+  COUNT(c.order_id) AS pizza_count, 
+  r.distance, ROUND((r.duration / 60),1) AS duration_hr , 
+  ROUND((r.distance/r.duration * 60), 1) AS avg_speed
+FROM runner_order_temp AS r
+JOIN customer_order_temp AS c
+  ON r.order_id = c.order_id
+WHERE distance IS NOT NULL
+GROUP BY r.runner_id, c.customer_id, c.order_id, r.distance, r.duration
+ORDER BY c.order_id;
 
