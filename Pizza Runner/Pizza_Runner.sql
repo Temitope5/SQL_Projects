@@ -309,7 +309,7 @@ WITH orders_extra AS (
   FROM customer_order_temp
 )
 
-SELECT topping_name, COUNT(*) AS no_of_times
+SELECT topping_name As most_common_extra, COUNT(*) AS no_of_times
 FROM orders_extra
 INNER JOIN pizza_runner.pizza_toppings p
 ON orders_extra.extras::INTEGER = p.topping_id
@@ -320,3 +320,77 @@ LIMIT 1;
 
 
 -- 3. 
+WITH orders_exclusion AS (
+  SELECT order_id, UNNEST(STRING_TO_ARRAY(exclusions, ', ')) AS exclusions
+  FROM customer_order_temp
+)
+
+SELECT topping_name As most_common_exclusion, COUNT(*) AS no_of_times
+FROM orders_exclusion
+INNER JOIN pizza_runner.pizza_toppings AS p
+ON orders_exclusion.exclusions::INTEGER = p.topping_id
+WHERE orders_exclusion.exclusions IS NOT NULL
+GROUP BY topping_name
+ORDER BY no_of_times DESC
+LIMIT 1;
+
+-- 4.
+WITH orders AS (
+  SELECT *, ROW_NUMBER() OVER () AS row_index
+  FROM customer_order_temp
+),
+exclusions AS (
+  -- Extract individual exclusions from the 'exclusions' column and unnest them
+  SELECT order_id, pizza_id, row_index, topping_name
+  FROM 
+	(
+    	SELECT order_id, pizza_id, row_index,
+        UNNEST(STRING_TO_ARRAY(exclusions, ', ')) AS exclusions
+        FROM orders
+		 WHERE exclusions IS NOT NULL  -- Filter out NULL
+    ) AS tmp
+  LEFT JOIN pizza_runner.pizza_toppings p
+  ON tmp.exclusions::INTEGER = p.topping_id -- Join with pizza_toppings table to get topping names
+  
+),
+extras AS (
+  -- Extract individual extras from the 'extras' column and unnest them
+  SELECT order_id, pizza_id, row_index, topping_name
+  FROM (
+    SELECT * FROM (
+    	SELECT order_id, pizza_id, row_index,
+        UNNEST(STRING_TO_ARRAY(extras, ', ')) AS extras
+        FROM orders
+    ) AS tmp
+    WHERE extras IS NOT NULL -- Filter out NULL 
+  ) AS temp_table
+  LEFT JOIN pizza_runner.pizza_toppings p
+  ON temp_table.extras::INTEGER = p.topping_id -- Join with pizza_toppings table to get topping names
+  
+),
+exclusions_toppings AS (
+  -- Aggregate exclusions for each order and concatenate them as a comma-separated list
+  SELECT row_index, 
+  STRING_AGG(topping_name, ', ') AS exclusions 
+  FROM exclusions
+  GROUP BY 1
+),
+extras_toppings AS (
+  -- Aggregate extras for each order and concatenate them as a comma-separated list
+  SELECT row_index, 
+  STRING_AGG(topping_name, ', ') AS extras 
+  FROM extras
+  GROUP BY 1
+)
+
+-- Combine the results from all CTEs to generate the final output
+SELECT CONCAT(pizza_name, 
+              CASE WHEN t.exclusions IS NULL THEN '' ELSE ' - Exclude ' END, 
+              t.exclusions,
+             CASE WHEN e.extras IS NULL THEN '' ELSE ' - Extra ' END,
+              e.extras
+             ) AS pizza_ordered 
+FROM orders AS o
+LEFT JOIN exclusions_toppings AS t USING (row_index)
+LEFT JOIN extras_toppings AS e USING (row_index)
+LEFT JOIN pizza_runner.pizza_names AS p USING (pizza_id);
