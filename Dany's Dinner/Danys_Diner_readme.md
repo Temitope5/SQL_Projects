@@ -114,8 +114,10 @@ ORDER BY most_purchased DESC;
 ````
 
 #### Steps:
-- **COUNT** number of ```product_id``` and **ORDER BY** ```most_purchased``` by descending order. 
-- Then, use **TOP 1** to filter highest number of purchased item.
+Sure, here it is:
+
+- **COUNT** the number of ```product_id``` and **ORDER BY** the count in descending order to find the ```most_purchased``` items.
+- Use **TOP 1** to filter and display the highest number of purchased item.
 
 #### Answer:
 | most_purchased | product_name | 
@@ -123,7 +125,7 @@ ORDER BY most_purchased DESC;
 | 8       | ramen |
 
 
-- Most purchased item on the menu is ramen which is 8 times. Yummy!
+- The most purchased item on the menu is ramen, which has been ordered 8 times.
 
 ***
 
@@ -147,8 +149,8 @@ WHERE rank = 1;
 ````
 
 #### Steps:
-- Create a ```fav_item_cte``` and use **DENSE_RANK** to ```rank``` the ```order_count``` for each product by descending order for each customer.
-- Generate results where product ```rank = 1``` only as the most popular product for each customer.
+- Create a CTE (Common Table Expression) named ```fav_item_cte``` and use **DENSE_RANK** to assign a ```rank``` to each product based on its ```order_count``` in descending order for each customer.
+- Retrieve results showing only the products where the ```rank``` is equal to 1, representing the most popular product for each customer.
 
 #### Answer:
 | customer_id | product_name | order_count |
@@ -159,8 +161,8 @@ WHERE rank = 1;
 | B           | ramen        |  2   |
 | C           | ramen        |  3   |
 
-- Customer A and C's favourite item is ramen.
-- Customer B enjoys all items on the menu. He/she is a true foodie, sounds like me!
+- Based on the analysis, both Customer A and Customer C's favorite item is ramen.
+- On the other hand, Customer B seems to enjoy all items on the menu
 
 ***
 
@@ -186,8 +188,8 @@ WHERE rank = 1;
 ````
 
 #### Steps:
-- Create ```member_sales_cte``` by using **windows function** and partitioning ```customer_id``` by ascending ```order_date```. Then, filter ```order_date``` to be on or after ```join_date```.
-- Then, filter table by ```rank = 1``` to show 1st item purchased by each customer.
+- Let's create a temporary table called ```member_sales_cte``` using a window function. We'll partition it by ascending ```order_date``` and then filter the results to include only records on or after the ```join_date``` for each customer.
+- After that, we'll further filter the table to show only the first item purchased by each customer, where ```rank = 1```.
 
 #### Answer:
 | customer_id | order_date  | product_name |
@@ -195,8 +197,8 @@ WHERE rank = 1;
 | A           | 2021-01-07 | curry        |
 | B           | 2021-01-11 | sushi        |
 
-- Customer A's first order as member is curry.
-- Customer B's first order as member is sushi.
+- Based on the analysis from the ```member_sales_cte``` table, we found that Customer A's first order as a member was curry.
+- Similarly, Customer B's first order as a member was sushi.
 
 ***
 
@@ -222,8 +224,8 @@ WHERE rank = 1;
 ````
 
 #### Steps:
-- Create a ```prior_member_purchased_cte``` to create new column ```rank``` by using **Windows function** and partitioning ```customer_id``` by descending ```order_date``` to find out the last ```order_date``` before customer becomes a member.
-- Filter ```order_date``` before ```join_date```.
+- To find out the last ```order_date``` before a customer becomes a member, we created the ```prior_member_purchased_cte``` table. We used a **Windows function** with partitioning by ```customer_id``` and ordering by descending ```order_date``` to create a new column ```rank``` that represents the sequence of orders for each customer.
+- Then, we filtered the table to include only the ```order_date``` that occurred before the corresponding customer's ```join_date```. This gives us the last purchase date before the customer became a member.
 
 #### Answer:
 | customer_id | order_date  | product_name |
