@@ -4,24 +4,25 @@
 
 ## Solution
 
-View the complete syntax [here](https://github.com/Temitope5/SQL_Projects/blob/main/Dany's%20Dinner/Dany's%20Dinner.sql)
+View the complete syntax.
 
 ***
 
 ### 1. What is the total amount each customer spent at the restaurant?
 
 ````sql
-SELECT s.customer_id, sum(m.price) AS total_amount
+SELECT s.customer_id, SUM(price) AS total_sales
 FROM dbo.sales AS s
-INNER JOIN 
-dbo.menu AS m
-ON m.product_id =s.product_id
+JOIN dbo.menu AS m
+   ON s.product_id = m.product_id
 GROUP BY customer_id; 
 ````
 
 #### Steps:
-- Use **SUM** and **GROUP BY** to find out ```total_sales``` contributed by each customer.
-- Use **JOIN** to merge ```sales``` and ```menu``` tables as ```customer_id``` and ```price``` are from both tables.
+
+- To calculate the total sales from each customer, we'll use the **SUM** function combined with **GROUP BY**.
+- We can merge the ```sales``` and ```menu``` tables by using **JOIN**, matching them through the shared attributes of ```customer_id``` and ```price```.
+
 
 
 #### Answer:
@@ -46,8 +47,8 @@ GROUP BY customer_id;
 ````
 
 #### Steps:
-- Use **DISTINCT** and wrap with **COUNT** to find out the ```visit_count``` for each customer.
-- If we do not use **DISTINCT** on ```order_date```, the number of days may be repeated. For example, if Customer A visited the restaurant twice on '2021–01–07', then number of days is counted as 2 days instead of 1 day.
+- To determine the ```visit_count``` for each customer, we'll use the **COUNT** function with **DISTINCT** on the ```order_date``` column. This ensures that we avoid counting the same day multiple times if a customer visited the restaurant more than once on that particular day.
+- By using **DISTINCT**, we only consider unique dates for each customer, providing an accurate count of their visits.
 
 #### Answer:
 | customer_id | visit_count |
@@ -65,7 +66,7 @@ GROUP BY customer_id;
 ### 3. What was the first item from the menu purchased by each customer?
 
 ````sql
-WITH cte AS
+WITH ordered_sales_cte AS
 (
    SELECT customer_id, order_date, product_name,
       DENSE_RANK() OVER(PARTITION BY s.customer_id
@@ -76,15 +77,16 @@ WITH cte AS
 )
 
 SELECT customer_id, product_name
-FROM cte
+FROM ordered_sales_cte
 WHERE rank = 1
 GROUP BY customer_id, product_name;
 ````
 
 #### Steps:
-- Create a temp table ```order_sales_cte``` and use **Windows function** with **DENSE_RANK** to create a new column ```rank``` based on ```order_date```.
-- Instead of **ROW_NUMBER** or **RANK**, use **DENSE_RANK** as ```order_date``` is not time-stamped hence, there is no sequence as to which item is ordered first if 2 or more items are ordered on the same day.
-- Subsequently, **GROUP BY** all columns to show ```rank = 1``` only.
+
+- Create a  CTE ```order_sales_cte``` and use **DENSE_RANK** to add a new column ```rank``` based on ```order_date```.
+- Since ```order_date``` lacks timestamps, use **DENSE_RANK** to avoid assigning different ranks to orders placed on the same day.
+- **GROUP BY** all columns to display only records with ```rank = 1```, showing the first order made by each customer without considering the order sequence on the same day.
 
 #### Answer:
 | customer_id | product_name | 
@@ -98,25 +100,6 @@ GROUP BY customer_id, product_name;
 - Customer B's first order is curry.
 - Customer C's first order is ramen.
 
-Alternatively- Assuming the first item refers to the initial item bought in their basket
-
-````sql
-WITH cte AS
-(
-   SELECT customer_id, order_date, product_name,
-      ROW_NUMBER() OVER(PARTITION BY s.customer_id
-      ORDER BY s.order_date) AS rank
-   FROM dbo.sales AS s
-   JOIN dbo.menu AS m
-      ON s.product_id = m.product_id
-)
-
-SELECT customer_id, product_name
-FROM cte
-WHERE rank = 1
-;
-````
-
 ***
 
 ### 4. What is the most purchased item on the menu and how many times was it purchased by all customers?
@@ -124,10 +107,10 @@ WHERE rank = 1
 ````sql
 SELECT TOP 1 (COUNT(s.product_id)) AS most_purchased, product_name
 FROM dbo.sales AS s
-Left JOIN dbo.menu AS m
-ON s.product_id = m.product_id
-GROUP BY product_name
-ORDER BY 1 DESC;
+JOIN dbo.menu AS m
+   ON s.product_id = m.product_id
+GROUP BY s.product_id, product_name
+ORDER BY most_purchased DESC;
 ````
 
 #### Steps:
@@ -362,9 +345,9 @@ Our assumptions are:
 
 #### Answer:
 | customer_id | total_points | 
-| ----------- | -------------|
-| A           | 1370         |
-| B           | 820          |
+| ----------- | ---------- |
+| A           | 1370 |
+| B           | 820 |
 
 - Total points for Customer A is 1,370.
 - Total points for Customer B is 820.
@@ -456,3 +439,5 @@ FROM summary_cte;
 
 
 ***
+
+
