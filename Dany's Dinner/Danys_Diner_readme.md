@@ -234,8 +234,8 @@ WHERE rank = 1;
 | A           | 2021-01-01 |  curry        |
 | B           | 2021-01-04 |  sushi        |
 
-- Customer A’s last order before becoming a member is sushi and curry.
-- Whereas for Customer B, it's sushi. That must have been a real good sushi!
+- Customer A's last orders before becoming a member were sushi and curry.
+- As for Customer B, it was sushi. That must have been some really good sushi!
 
 ***
 
@@ -255,7 +255,7 @@ GROUP BY s.customer_id;
 ````
 
 #### Steps:
-- Filter ```order_date``` before ```join_date``` and perform a **COUNT** **DISTINCT** on ```product_id``` and **SUM** the ```total spent``` before becoming member.
+- Filter the `order_date` before `join_date` and then perform a **COUNT DISTINCT** on `product_id` and **SUM** the `total spent` before becoming a member.- Filter ```order_date``` before ```join_date``` and perform a **COUNT** **DISTINCT** on ```product_id``` and **SUM** the ```total spent``` before becoming member.
 
 #### Answer:
 | customer_id | unique_menu_item | total_sales |
@@ -290,13 +290,15 @@ GROUP BY s.customer_id
 ````
 
 #### Steps:
-Let’s breakdown the question.
-- Each $1 spent = 10 points.
-- But, sushi (product_id 1) gets 2x points, meaning each $1 spent = 20 points
-So, we use CASE WHEN to create conditional statements
-- If product_id = 1, then every $1 price multiply by 20 points
-- All other product_id that is not 1, multiply $1 by 10 points
-Using ```price_points```, **SUM** the ```points```.
+- To calculate the total points earned by each customer before becoming a member, we'll use the following breakdown:
+	- Each $1 spent = 10 points.
+	- For sushi (product_id 1), each $1 spent = 20 points.
+
+- We'll use the CASE WHEN statement to create conditional statements for calculating points:
+	- If product_id = 1, then every $1 price is multiplied by 20 points.
+	- For all other product_id values that are not 1, each $1 is multiplied by 10 points.
+
+- Then, we'll use the SUM function to calculate the total points earned, which we'll name as ```price_points```.
 
 #### Answer:
 | customer_id | total_points | 
@@ -338,12 +340,13 @@ GROUP BY d.customer_id, s.order_date, d.join_date, d.valid_date, d.last_date, m.
 ````
 
 #### Steps:
-- In ```dates_cte```, find out customer’s ```valid_date``` (which is 6 days after ```join_date``` and inclusive of ```join_date```) and ```last_day``` of Jan 2021 (which is ‘2021–01–31’).
+To calculate the points for each customer based on the different time periods, we'll use the following assumptions:
 
-Our assumptions are:
-- On Day -X to Day 1 (customer becomes member on Day 1 ```join_date```), each $1 spent is 10 points and for sushi, each $1 spent is 20 points.
+- On Day -X to Day 1 (customer becomes a member on Day 1 ```join_date```), each $1 spent is 10 points and for sushi, each $1 spent is 20 points.
 - On Day 1 ```join_date``` to Day 7 ```valid_date```, each $1 spent for all items is 20 points.
-- On Day 8 to ```last_day``` of Jan 2021, each $1 spent is 10 points and sushi is 2x points.
+- On Day 8 to ```last_day``` of Jan 2021, each $1 spent is 10 points, and for sushi, it's 2x points (20 points per $1).
+
+We'll create a ```dates_cte``` to find out the customer's ```valid_date``` (which is 6 days after ```join_date``` and inclusive of ```join_date```) and ```last_day``` of Jan 2021 (which is ‘2021–01–31’). Then, we'll calculate the points accordingly based on the defined assumptions.
 
 #### Answer:
 | customer_id | total_points | 
