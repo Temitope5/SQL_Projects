@@ -39,3 +39,27 @@ COUNT(1) over(PARTITION BY company) AS total_cnt
 FROM employee) AS a
 WHERE rn BETWEEN total_cnt*1.0/2 AND total_cnt * 1.0/2 +1
 GROUP BY company
+
+-- Question 2
+-- Pivot the data table in such a way that it is grouped by city
+--Script
+create table players_location
+(
+name varchar(20),
+city varchar(20)
+);
+delete from players_location;
+insert into players_location
+values ('Sachin','Mumbai'),('Virat','Delhi') , ('Rahul','Bangalore'),('Rohit','Mumbai'),('Mayank','Bangalore');
+
+--Answer 
+SELECT
+	 MAX(case when city = 'Bangalore' then name else NULL END) as Bangalore,
+	 MAX(case when city = 'Mumbai' then name else NULL END) AS Mumbai,
+	 MAX(case when city = 'Delhi' then name else NULL end) as Delhi
+FROM	 
+(SELECT *,
+row_number() OVER (PARTITION BY CITY ORDER BY name ASC)AS player_groups
+from players_location) AS a
+GROUP BY player_groups
+ORDER BY player_groups
