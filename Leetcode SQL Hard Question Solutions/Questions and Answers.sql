@@ -63,3 +63,32 @@ row_number() OVER (PARTITION BY CITY ORDER BY name ASC)AS player_groups
 from players_location) AS a
 GROUP BY player_groups
 ORDER BY player_groups
+
+-- Questions 3: Get the second most recent activity, if there is only one activity, return that one
+
+--Script
+
+create table UserActivity
+(
+username      varchar(20) ,
+activity      varchar(20),
+startDate     Date   ,
+endDate      Date
+);
+
+insert into UserActivity values 
+('Alice','Travel','2020-02-12','2020-02-20')
+,('Alice','Dancing','2020-02-21','2020-02-23')
+,('Alice','Travel','2020-02-24','2020-02-28')
+,('Bob','Travel','2020-02-11','2020-02-18');
+
+-- Answer 
+WITH cte AS
+(
+SELECT *, COUNT(1) OVER(PARTITION BY username)AS activity_count, RANK() OVER (PARTITION BY username order by startdate desc)as rank
+from useractivity
+)
+
+SELECT username, activity,startdate,enddate
+FROM CTE
+WHERE activity_count = 1 OR RANK = 2
