@@ -1,9 +1,9 @@
 
 --Question 1
 --Write a SQL query to find the median salary of each company
--- Bonus points if you can solve it without using any buildt-in SQL functions
+--Bonus points if you can solve it without using any buildt-in SQL functions
 
--- script:
+--Table Creation Script:
 create table employee 
 (
 emp_id int,
@@ -41,8 +41,9 @@ WHERE rn BETWEEN total_cnt*1.0/2 AND total_cnt * 1.0/2 +1
 GROUP BY company
 
 -- Question 2
+
 -- Pivot the data table in such a way that it is grouped by city
---Script
+--Table Creation Script
 create table players_location
 (
 name varchar(20),
@@ -66,8 +67,7 @@ ORDER BY player_groups
 
 -- Questions 3: Get the second most recent activity, if there is only one activity, return that one
 
---Script
-
+--Table Creation Script
 create table UserActivity
 (
 username      varchar(20) ,
