@@ -42,7 +42,7 @@ GROUP BY company
 
 -- Question 2
 
--- Pivot the data table in such a way that it is grouped by city
+--Pivot the data table in such a way that it is grouped by city
 --Table Creation Script
 create table players_location
 (
@@ -55,20 +55,20 @@ values ('Sachin','Mumbai'),('Virat','Delhi') , ('Rahul','Bangalore'),('Rohit','M
 
 --Answer 
 SELECT
-	 MAX(case when city = 'Bangalore' then name else NULL END) as Bangalore,
-	 MAX(case when city = 'Mumbai' then name else NULL END) AS Mumbai,
-	 MAX(case when city = 'Delhi' then name else NULL end) as Delhi
+	 MAX(CASE when city = 'Bangalore' THEN name ELSE NULL END) as Bangalore,
+	 MAX(CASE when city = 'Mumbai' THEN name ELSE NULL END) AS Mumbai,
+	 MAX(CASE when city = 'Delhi' THEN name ELSE NULL END) as Delhi
 FROM	 
 (SELECT *,
-row_number() OVER (PARTITION BY CITY ORDER BY name ASC)AS player_groups
-from players_location) AS a
+ROW_NUMBER() OVER (PARTITION BY CITY ORDER BY name ASC)AS player_groups
+FROM players_location) AS a
 GROUP BY player_groups
 ORDER BY player_groups
 
 -- Questions 3: Get the second most recent activity, if there is only one activity, return that one
 
 --Table Creation Script
-create table UserActivity
+CREATE TABLE UserActivity
 (
 username      varchar(20) ,
 activity      varchar(20),
@@ -76,7 +76,7 @@ startDate     Date   ,
 endDate      Date
 );
 
-insert into UserActivity values 
+INSERT INTO UserActivity VALUES 
 ('Alice','Travel','2020-02-12','2020-02-20')
 ,('Alice','Dancing','2020-02-21','2020-02-23')
 ,('Alice','Travel','2020-02-24','2020-02-28')
@@ -85,8 +85,8 @@ insert into UserActivity values
 -- Answer 
 WITH cte AS
 (
-SELECT *, COUNT(1) OVER(PARTITION BY username)AS activity_count, RANK() OVER (PARTITION BY username order by startdate desc)as rank
-from useractivity
+SELECT *, COUNT(1) OVER(PARTITION BY username)AS activity_count, RANK() OVER (PARTITION BY username ORDER BY startdate DESC)AS RANK
+FROM useractivity
 )
 
 SELECT username, activity,startdate,enddate
