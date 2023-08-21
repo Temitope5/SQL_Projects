@@ -92,3 +92,14 @@ FROM useractivity
 SELECT username, activity,startdate,enddate
 FROM CTE
 WHERE activity_count = 1 OR RANK = 2
+
+-- Question 4
+-- Table Creation Script
+CREATE TABLE sales (
+product_id int,
+period_start date,
+period_end date,
+average_daily_sales int
+);
+
+INSERT INTO sales VALUES(1,'2019-01-25','2019-02-28',100),(2,'2018-12-01','2020-01-01',10),(3,'2019-12-01','2020-01-31',1);
